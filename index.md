@@ -1,5 +1,5 @@
 # CS 4641 Project Proposal
-
+![Alt text](https://raw.githubusercontent.com/Aaronwork1205/Machine_learning/gh-pages/assets/css/infographic_cropped1024_1.jpg)
 
 ## Introduction and background 
 
