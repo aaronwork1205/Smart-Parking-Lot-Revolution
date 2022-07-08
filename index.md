@@ -1,5 +1,5 @@
 # CS 4641 Project Proposal
- <img src = "https://raw.githubusercontent.com/Aaronwork1205/Machine_learning/gh-pages/assets/css/infographic_cropped1024_1.jpg"> 
+ <img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/info.jpg?raw=true"> 
 
 ## Introduction and background 
 
