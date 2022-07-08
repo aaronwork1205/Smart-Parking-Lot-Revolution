@@ -35,6 +35,14 @@ However, since the DBSAN algorithm relies on grouping the data points right next
 
 
 ### Discussion
+
+#### Feature selection, engineering, and dimensionality reduction
+
+Since our database only contains images, which itself is a dataset composed by a m by n by 3 array. Due to the nature of our project, we didn’t need to use feature selection or engineering for the current step as we only have two features (length and height) after we eliminated the 3rd dimension (rgb value). We confirmed with the Dr. Valente and was told that we were allowed to skip feature selection and engineering for this project. 
+For dimensionality reduction, we decided to use Principal Component Analysis(PCA) to transform the values in each blue, green, and red set into a smaller k=50 number of correlated variables while keeping as much variability in the original data as possible. In this case, we used PCA to compress our image by minimizing the size in bytes of an image. As we can see from the result section, the compressed image isn’t as clear as the original image; however, it preserved most of the shape and variation, and we were able to transform the compressed image to grayscale and further black and white picture. 
+As we decrease the n_components we put in the PCA, we can see that the picture becomes more and more compressed and blurry. After many testings, we found out that a value of 50 is the best for most datasets. We were able to achieve around on average 98.5% of the variance in the data with only 50 components. Moreover, we preserved the size of the original image even though we reduced the dimension individually for each channel to 50 from its original size (around 500 on average).
+With the implementation of PCA, the computer will be able to process the reduced image much faster. 
+
  
 #### Unsupervised learning methods (density estimation, clustering, etc)
 
