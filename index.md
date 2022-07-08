@@ -34,7 +34,7 @@ However, since the DBSAN algorithm relies on grouping the data points right next
 
 ### Discussion
  
-▪ Unsupervised learning methods (density estimation, clustering, etc
+# Unsupervised learning methods (density estimation, clustering, etc
 
 Since the input data points are the pixels from the binary image, the data points are distributed to capture the shapes from the original image, such as the front/rear bumper, headlights, and windshields, as well as the license plate. All other areas are primarily white and will be ignored by the algorithm. Most preprocessed images contain the area of the license plate that is isolated from other subjects, in other words, there is a recognizable boundary around the plate. 
 
