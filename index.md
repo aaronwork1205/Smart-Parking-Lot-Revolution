@@ -33,7 +33,7 @@ We first Run DBSCAN on the data points (xy coordinates of the black pixels) with
 
 Our project focused on car plate recognition, which dataset consists of pixels of a given image. Before preprocessing the image, we run PCA on several images. We found that most pictures work best with a dimension of 50 as the parameter for PCA. The average variance that was accounted for after PCA is around 98.6% percent which is relatively high. With the compressed image, our processing speed will dramatically increase when it comes to future training since each channel’s dimension is decreased to 50.
 
-<img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/1.png?raw=true>
+<img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/1.png?raw=true">
 
 
 <img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/2.png?raw=true">
