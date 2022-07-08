@@ -32,9 +32,9 @@ The unsupervised learning methods we employed on the dataset are K-means, GMM, a
 However, since the DBSAN algorithm relies on grouping the data points right next to each other, it works well on our problem. As we can see from the plot, DBSCAN algotithm will produce uncentern number of clusters, however, one of them will be the number plate. The black pixels of the number plate (blank places will no number is present) are all connected. As a result, the DBSCAN algorithm is capable of grouping the adjacent black pixels, and one of the clusters is the cluster of our plate. However, DBSCAN heavily relies on preproccessing, making sure that then number plate will be a clear and solid quadrilateral, not diated to make the boundaries unclear. So, with every aspect combined, DBSCAN is the best-performing algorithm.
 
 
-### Discussion
+## Discussion
 
-#### Feature selection, engineering, and dimensionality reduction
+### Feature selection, engineering, and dimensionality reduction
 
 Since our database only contains images, which itself is a dataset composed by a m by n by 3 array. Due to the nature of our project, we didn’t need to use feature selection or engineering for the current step as we only have two features (length and height) after we eliminated the 3rd dimension (rgb value). We confirmed with the Dr. Valente and was told that we were allowed to skip feature selection and engineering for this project. 
 For dimensionality reduction, we decided to use Principal Component Analysis(PCA) to transform the values in each blue, green, and red set into a smaller k=50 number of correlated variables while keeping as much variability in the original data as possible. In this case, we used PCA to compress our image by minimizing the size in bytes of an image. As we can see from the result section, the compressed image isn’t as clear as the original image; however, it preserved most of the shape and variation, and we were able to transform the compressed image to grayscale and further black and white picture. 
@@ -42,7 +42,7 @@ As we decrease the n_components we put in the PCA, we can see that the picture b
 With the implementation of PCA, the computer will be able to process the reduced image much faster. 
 
  
-#### Unsupervised learning methods (density estimation, clustering, etc)
+### Unsupervised learning methods (density estimation, clustering, etc)
 
 Since the input data points are the pixels from the binary image, the data points are distributed to capture the shapes from the original image, such as the front/rear bumper, headlights, and windshields, as well as the license plate. All other areas are primarily white and will be ignored by the algorithm. Most preprocessed images contain the area of the license plate that is isolated from other subjects, in other words, there is a recognizable boundary around the plate. 
 
