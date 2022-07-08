@@ -21,7 +21,16 @@ The vehicle plate number recognition system is still limited and has low efficie
 
 ## Results
 
-The expected result of the vehicle plate recognition system will be highly efficient and capable of handling a large amount of vehicle throughput in a short period of time. According to the GA/T 497-2004 and GA/T 497-2009 standards, the detection precision has to be higher than 90% during the daytime and higher than 80% during the nighttime. The expected accuracy for this model is at least 85% with mixed light conditions. We will also include two checkpoints for this project process, which are the midterm check and the final check. The midterm check will include the check for the sufficient dataset and the recognition rate. If the result is under the expectation, we need to reconfigure the process or need to optimize the model in order to achieve better performance. The final exam will check whether the efficiency and accuracy of the recognition requirement are met.
+Our project focused on car plate recognition, which dataset consists of pixels of a given image. Due to this dataset's nature, each data point's features are RGB and XY coordinates. Feature selection is not applicable in our problem space since we must transform our features to binary values (black and white) and XY coordinates using preprocessing methods. However, we tried to run PCA on selected images.
+
+The unsupervised learning methods we employed on the dataset are K-means, GMM, and DBSCAN.
+
+[K-means image], [GMM image], [DBSCAN image].
+
+By comparing the results, we can see that the DBSCAN method yields the best result. That is because K-means and GMM algorithms rely on calculating the distance between each data point and the center of each cluster. However, due to the unregular shapes resulting from preprocessing, the messiness of the positioning of clusters, and the uncertainty of the number of clusters, K-means and GMM algorithms did not yield satisfactory results. Sometimes K-means and GMM will produce weird clustering result, and it highly depends on pre-selecting the best number of clusters.
+
+However, since the DBSAN algorithm relies on grouping the data points right next to each other, it works well on our problem. As we can see from the plot, DBSCAN algotithm will produce uncentern number of clusters, however, one of them will be the number plate. The black pixels of the number plate (blank places will no number is present) are all connected. As a result, the DBSCAN algorithm is capable of grouping the adjacent black pixels, and one of the clusters is the cluster of our plate. However, DBSCAN heavily relies on preproccessing, making sure that then number plate will be a clear and solid quadrilateral, not diated to make the boundaries unclear. So, with every aspect combined, DBSCAN is the best-performing algorithm.
+
 
 ### Discussion
  
