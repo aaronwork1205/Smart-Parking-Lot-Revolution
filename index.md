@@ -33,13 +33,24 @@ We first Run DBSCAN on the data points (xy coordinates of the black pixels) with
 
 Our project focused on car plate recognition, which dataset consists of pixels of a given image. Before preprocessing the image, we run PCA on several images. We found that most pictures work best with a dimension of 50 as the parameter for PCA. The average variance that was accounted for after PCA is around 98.6% percent which is relatively high. With the compressed image, our processing speed will dramatically increase when it comes to future training since each channel’s dimension is decreased to 50.
 
+<img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/1.png?raw=true>
+
+
+<img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/2.png?raw=true">
+
 Due to this dataset's nature, each data point's features are RGB and XY coordinates. Therefore, feature selection is not applicable in our problem space since we must transform our features to binary values (black and white) and XY coordinates using preprocessing methods. To decrease the number of datapoints in each image, we extracted only the black pixels and obtained the following image.
 
+<img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/3.png?raw=true">
 
 The unsupervised learning methods we tried to perform on the dataset are K-means, GMM, and DBSCAN. For some of the car images, GMM clustering was able to produce few clusters , and one of the images has the possibility to contain the license plate. For some other car images, Kmeans method is really good at predicting a clear area of the location of licence plate; however, it doesn’t work on most of the pictures. By comparing the results, we can see that the DBSCAN method yields the best result. That is because K-means and GMM algorithms rely on calculating the distance between each data point and the center of each cluster. However, due to the irregular shapes resulting from preprocessing, the messiness of the positioning of clusters, and the uncertainty of the number of clusters, K-means and GMM algorithms did not yield satisfactory results for most of the picture. Sometimes K-means and GMM will produce weird clustering results, and it highly depends on pre-selecting the best number of clusters as well as the quality of the picture.
 
+<img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/4.png?raw=true">
+
+<img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/5.png?raw=true">
 
 However, since the DBSCAN algorithm relies on grouping the data points right next to each other, it works well on our problem. As we can see from the plot, DBSCAN algotithm will produce multiple uncentern number of clusters, however, one of them will be the number plate. The black pixels of the number plate (blank places with no number present) are all connected. As a result, the DBSCAN algorithm is capable of grouping the adjacent black pixels, and one of the clusters is the cluster of our plate. However, DBSCAN heavily relies on preprocessing and number of thresholds, making sure that each number plate will be a clear and solid quadrilateral, not dilated to make the boundaries unclear. With every aspect considered, DBSCAN is the best-performing algorithm.
+
+<img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/6.png?raw=true">
 
 
 
