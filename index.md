@@ -1,5 +1,5 @@
 # CS 4641 Project Midterm Report
- <img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/info.jpg?raw=true"> 
+ <img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/new_info.jpg?raw=true"> 
 
 ## Introduction and background 
 
