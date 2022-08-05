@@ -85,10 +85,11 @@ However, since the DBSCAN algorithm relies on grouping the data points right nex
 
 
 ### SVM
+<img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/SVM results.jpg?raw=true">
 The results of supervised learning greatly depend on unsupervised learning for accurately capturing all the characters on the plate in order to produce accurate predictions. If only judging by the prediction of the individual character successfully captured from the plate, the SVM model of the first data set has an accuracy of about 53.5%, and the model trained by the second data set has an accuracy of about 68.3%. The accuracies are based on the same dozen of car images. 
 
 ### CNN
-
+<img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/CNN results.jpg?raw=true">
 
 
 
