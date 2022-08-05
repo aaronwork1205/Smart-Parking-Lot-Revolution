@@ -26,9 +26,35 @@ We had a few approaches to segmented the image to identify the vehicle plates ar
 
 We first Run DBSCAN on the data points (xy coordinates of the black pixels) with eps equals to 1.6, and min number to be 5. Since points in plate area should be closely packed with no gap between adjacent points, given any point on the plate there would be 9 adjacent points and they are all within 1.414 in distance, because euclidean distance is used in this algorithm. Then, we select the clusters that satisfy criterias like a certain length to width ratio, percentage of points to total data points, and percentage of area occupied by the points, because most of the target clusters have very similar values for these parameters. After this step, the raw result from DBSCAN can narrow down to just a few clusters and Beta-CV measure is implemented to identify the cluster most likely to be the target. Eventually, we calculate the rectangle position where the plate cluster is and find the region on the original image. 
 
+### Data
+A series of pictures of alphabets and numbers were chosen from the public domain for training the model. Two datasets were used for the model training. One data set contains 10 pictures of each character that are in the same font whereas the other contains 25 pictures of each and covers several fonts.
+
 ### Supervised learning methods:
 
-For the supervised learning section, SVM was used to train the model and predict the plates. A series of pictures of alphabets and numbers were chosen from the public domain for training the model. Two datasets were used for the model training. One data set contains 10 pictures of each character that are in the same font whereas the other contains 25 pictures of each and covers several fonts. Similar to how the plates are preprocessed, each picture was converted into binary images and standardized shape before being passed into the model for training. ‘sklearn.svm.SVC’ was used to perform SVM on each picture and the models were saved as pkl files for later prediction. As for the kernel, linear and poly were both used and compared but based on the results no noticeable difference was found.  After the models were trained, each separated character captured from the plate was first reshaped to a standardized shape and then passed into the 2 trained models for separate prediction. 
+For the supervised learning section, SVM was used to train the model and predict the plates. Similar to how the plates are preprocessed, each picture was converted into binary images and standardized shape before being passed into the model for training. ‘sklearn.svm.SVC’ was used to perform SVM on each picture and the models were saved as pkl files for later prediction. As for the kernel, linear and poly were both used and compared but based on the results no noticeable difference was found.  After the models were trained, each separated character captured from the plate was first reshaped to a standardized shape and then passed into the 2 trained models for separate prediction. 
+
+### Deep Learning Method
+
+Since the result of SVM isn’t as accurate as we wish it to be, we have also tried the Convolutional Neural Network as one of the supervised learning methods to extract characters from the number plates. It is also a deep learning algorithm in which we use multiple layers to progressly extract features that have higher importances from the images. In our project, we used 6 layers to reduce the images into a form that is easier to process, without losing features that are essential to getting a good prediction. 
+
+To begin our CNN implementation, we imported keras from TensorFlow which is a python library that is focusing on deep learning techniques .
+
+The first layer we used is a convolution layer with 32 output kernels and RELU as activation function. This way, it will hold the raw pixel values of the training images and extract features from it. It also ensures the spatial dimension by learning images features from small squares of input data.
+
+The second layer we used is a max-pooling layer, which is also responsible for reducing the spatial size of the feature and returning the maximum value from the portion of the image covered by the kernel . The reason why we used max pooling is to reduce the noise with dimensionality reduction. The model is now able to understand the features. 
+
+The third layer we used is a dropout layer in which we randomly set input units to 0 with a frequency rate of 0.4 at each step during training time. This means that 60% of the neurons will be preserved. This layer is used to prevent overfitting.
+The fourth layer we used is called a flatten layer which simply can transform our image into a column vector. 
+
+The fifth and sixth layers are dense layers, which we are using to classify images based on output from previous layers. The first activation we use is RELU and the second activation we used in softmax since relu has a better computation performance and softmax function is usually used in the last output layer.
+
+To train the model we created above, we used data with 30 images with different format for each class (0-z) to train and randomly chose 5 from each of the 30 images to test the accuracy of it. The accuracy of the model will be discussed in the results section. 
+
+After testing, we see that 40 times of epochs is enough to distinguish and correctly classify the features in images.
+
+To get the output of the license plate, we used the cropped image that is obtained from our unsupervised method and called the predict method from the model.
+
+
 
 
 
@@ -56,6 +82,15 @@ The unsupervised learning methods we tried to perform on the dataset are K-means
 However, since the DBSCAN algorithm relies on grouping the data points right next to each other, it works well on our problem. As we can see from the plot, DBSCAN algotithm will produce multiple uncentern number of clusters, however, one of them will be the number plate. The black pixels of the number plate (blank places with no number present) are all connected. As a result, the DBSCAN algorithm is capable of grouping the adjacent black pixels, and one of the clusters is the cluster of our plate. However, DBSCAN heavily relies on preprocessing and number of thresholds, making sure that each number plate will be a clear and solid quadrilateral, not dilated to make the boundaries unclear. With every aspect considered, DBSCAN is the best-performing algorithm.
 
 <img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/6.png?raw=true">
+
+
+### SVM
+The results of supervised learning greatly depend on unsupervised learning for accurately capturing all the characters on the plate in order to produce accurate predictions. If only judging by the prediction of the individual character successfully captured from the plate, the SVM model of the first data set has an accuracy of about 53.5%, and the model trained by the second data set has an accuracy of about 68.3%. The accuracies are based on the same dozen of car images. 
+
+### CNN
+
+
+
 
 ### Supervisewd Learning Results
 
