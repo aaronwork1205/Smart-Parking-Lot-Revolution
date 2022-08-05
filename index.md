@@ -3,10 +3,10 @@
 
 ## Introduction and background 
 
-### Vehicle plate recognition system: 
+#### Vehicle plate recognition system: 
 
 The vehicle plate recognition system is used to recognize the vehicle plate number and store the information for parking charging.
-### Background: 
+#### Background: 
 The vehicle plate number recognition system is still limited and has low efficiency when handling cases, which includes but is not limited to event parking, regular permit parking illegal parking. This incapability often will incur the congestion of the main traffic route and increase the risk of traffic incidents. In order to improve the correctness of plate recognition and thus improve the vehicle throughput, we need a better model to handle the plate recognition and save unit labor cost.
 
 ## Methodology
@@ -26,14 +26,14 @@ We had a few approaches to segmented the image to identify the vehicle plates ar
 
 We first Run DBSCAN on the data points (xy coordinates of the black pixels) with eps equals to 1.6, and min number to be 5. Since points in plate area should be closely packed with no gap between adjacent points, given any point on the plate there would be 9 adjacent points and they are all within 1.414 in distance, because euclidean distance is used in this algorithm. Then, we select the clusters that satisfy criterias like a certain length to width ratio, percentage of points to total data points, and percentage of area occupied by the points, because most of the target clusters have very similar values for these parameters. After this step, the raw result from DBSCAN can narrow down to just a few clusters and Beta-CV measure is implemented to identify the cluster most likely to be the target. Eventually, we calculate the rectangle position where the plate cluster is and find the region on the original image. 
 
-### Data
+#### Data
 A series of pictures of alphabets and numbers were chosen from the public domain for training the model. Two datasets were used for the model training. One data set contains 10 pictures of each character that are in the same font whereas the other contains 25 pictures of each and covers several fonts.
 
-### Supervised learning methods:
+#### Supervised learning methods:
 
 For the supervised learning section, SVM was used to train the model and predict the plates. Similar to how the plates are preprocessed, each picture was converted into binary images and standardized shape before being passed into the model for training. ‘sklearn.svm.SVC’ was used to perform SVM on each picture and the models were saved as pkl files for later prediction. As for the kernel, linear and poly were both used and compared but based on the results no noticeable difference was found.  After the models were trained, each separated character captured from the plate was first reshaped to a standardized shape and then passed into the 2 trained models for separate prediction. 
 
-### Deep Learning Method
+#### Deep Learning Method
 
 Since the result of SVM isn’t as accurate as we wish it to be, we have also tried the Convolutional Neural Network as one of the supervised learning methods to extract characters from the number plates. It is also a deep learning algorithm in which we use multiple layers to progressly extract features that have higher importances from the images. In our project, we used 6 layers to reduce the images into a form that is easier to process, without losing features that are essential to getting a good prediction. 
 
@@ -84,23 +84,26 @@ However, since the DBSCAN algorithm relies on grouping the data points right nex
 <img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/6.png?raw=true">
 
 
-### SVM
+#### SVM
 <img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/SVM results.jpg?raw=true">
+
+
 The results of supervised learning greatly depend on unsupervised learning for accurately capturing all the characters on the plate in order to produce accurate predictions. If only judging by the prediction of the individual character successfully captured from the plate, the SVM model of the first data set has an accuracy of about 53.5%, and the model trained by the second data set has an accuracy of about 68.3%. The accuracies are based on the same dozen of car images. 
 
-### CNN
+#### CNN
+
 <img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/CNN results.jpg?raw=true">
 
 
 
-### Supervisewd Learning Results
+#### Supervisewd Learning Results
 
 The results of supervised learning greatly depend on unsupervised learning for accurately capturing all the characters on the plate in order to produce accurate predictions. If only judging by the prediction of the individual character successfully captured from the plate, the SVM model of the first data set has an accuracy of about 53.5%, and the model trained by the second data set has an accuracy of about 68.3%. The accuracies are based on the same dozen of car images. 
 
 
 ## Discussion
 
-### Feature selection, engineering, and dimensionality reduction
+#### Feature selection, engineering, and dimensionality reduction
 
 Since our database only contains images, which itself is a dataset composed by m by n by 3 array. Due to the nature of our project, we didn’t need to use feature selection or engineering for the current step as we only have two features (length and height) after we eliminated the 3rd dimension (rgb value). We confirmed with the Dr. Valente and was told that we were allowed to skip feature selection and engineering for this project. 
 
@@ -111,7 +114,7 @@ As we decrease the n_components we put in the PCA, we can see that the picture b
 With the implementation of PCA, the computer will be able to process the reduced image much faster. 
 
  
-### Unsupervised learning methods (density estimation, clustering, etc)
+#### Unsupervised learning methods (density estimation, clustering, etc)
 
 Since the input data points are the pixels from the binary image, the data points are distributed to capture the shapes from the original image, such as the front/rear bumper, headlights, and windshields, as well as the license plate. All other areas are primarily white and will be ignored by the algorithm. Most preprocessed images contain the area of the license plate that is isolated from other subjects, in other words, there is a recognizable boundary around the plate. 
 
@@ -119,7 +122,7 @@ For evaluating the resulting clusters, serval characteristics are looked at. The
 
 By comparing the accuracy of the final results by GMM and DBSCAN, DBSCAN is clearly the method with the best performance. The plate’s data points appear to be a rectangle or trapezoid on the binary image and are located next to each other with no gap in between. In most cases, the GMM algorithm tries to cluster the data points in elliptic shapes, because the nature of GMM is to find and fit data points onto gaussian distributions in the same dimensional space as the features. Therefore, the GMM algorithm cannot accurately recognize shapes like rectangles or trapezoids and it usually includes much more excessive and unnecessary points outside the plate or split the plate into multiple clusters in other cases. On the other hand, DBSCAN is more effective on the data points. The result generated by DBSCAN mostly consists of clusters of shapes that could be recognized by eye and found on the original image. Unlike GMM splitting a shape into different clusters, DBSCAN includes an entire shape into one cluster. DBSCAN connects points on a density and distance basis so that it can cluster points together that are closely located which makes it able to detect arbitrarily-shaped clusters and robust to noise. Therefore, the rectangle-like plate can be easily identified by DBSCAN. 
 
-### Supervised Learning Discussion
+#### Supervised Learning Discussion
 
 Since the labels to be predicted are the characters on the license plates, it is reasonable to use methods that can recognize patterns on the image. The regression methods are good at numerical, continuous, and/or data that might have a mathematical relationship. However, identifying patterns in an image is a classification process and decision tree, SVM as well as CNN would be ideal for this type of problem. Due to limited time, only SVM and CNN were implemented. The classification of the character is the last step of plate recognition, its accuracy depends on previous clustering methods that capture the characters on the plate and these methods are not perfect in terms of accuracy. Because of the limitation of the clustering methods implemented, the accuracy of the supervised learning part will only account for those characters that have been successfully captured from the plate. 
 
