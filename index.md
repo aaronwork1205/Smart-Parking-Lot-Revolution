@@ -11,56 +11,65 @@ The vehicle plate number recognition system is still limited and has low efficie
 
 ## Methodology
 
- The dataset we will utilize is based on images of vehicle plates. To handle the influence of a variety of plates, the influence of different weather, lighting conditions, and the angle between the camera and the plate objects, at the very first step, we include 433 images of plates under different lighting conditions. 400 of these images will be served as the training dataset, and 33 of these images will be served as the test part. 
- 
-We will consider each image as each data point and the features are the RGB color space and XY coordinates. Also, we will consider the testing part of the neural network as the target, which is also the goal that the model is aiming for. The target also includes the raw image data processing, which contains the processing of raw environments and angles from which the images were taken. Basically, the images were treated the same way as the training data, which is to be binarized and tiled to the same angle for the neural network to identify the plate number. The images include the plates with backgrounds like parking lots or traffic scenes.  We might also need to include more image datasets in the future if needed to encounter emerging challenges. The dataset is obtained through roboflow.com and Kaggle.com for academic purposes. Each image in the datasets has already been preprocessed, zipped and cropped to similar image size and training efficiency. 
+#### Data
+We have 433 images of car images that contain their license plates. This dataset will be used to identify the performance of our data
+
+For Supervised Method’s training set (which is used to identify each characters from the segmented license plate), we obtain 20 to 30 images with different fonts from each classes (0-9, a-z)
+
+To test how accurate the model we built from our supervised method, we randomly choose 5 to 10 images from the above set and put it in the testing set.
+
+The dataset is obtained through roboflow.com and Kaggle.com for academic purposes. Each image in the datasets has already been preprocessed, zipped and cropped to similar image size and training efficiency.
+
+#### Preprocessing of the Image
 
 Due to the nature of our project, we didn’t need to clean up, standardize the data since all images are all RGB pictures with the 3 dimensions (length, width, and RGB value). We also confirmed with Dr. Valente to make sure that it is acceptable to not include feature engineering or selection for our project.
 
- Before we start preprocessing the data, we have performed Principal Component Analysis which is a linear dimensionality reduction technique to compress our image for the purpose of rapid iterations and computer processing. We utilized the PCA methods from sklearn library. After the proper library was imported, we first split the image into three channels (Blue, Green, and Red) and then normalized the data in each set by dividing all data of all channels by 255. Then, we fit and transform the data by only considering 50 dimensions for PCA. Then, we checked how much variance was accounted for after the reduction by calling the method explained_variance_ratio_. Then, we reconstructed the image by reverse transforming the data (which is a process of taking information lost data points from the reduced space and taking it back to the original space) and then merged all three channels into one to obtain a colorful reduced image.
+Before we start preprocessing the data, we have performed Principal Component Analysis which is a linear dimensionality reduction technique to compress our image for the purpose of rapid iterations and computer processing. We utilized the PCA methods from sklearn library. After the proper library was imported, we first split the image into three channels (Blue, Green, and Red) and then normalized the data in each set by dividing all data of all channels by 255. Then, we fit and transform the data by only considering 50 dimensions for PCA. We checked how much variance was accounted for after the reduction by calling the method explained_variance_ratio_. Then, we reconstructed the image by reverse transforming the data (which is a process of taking information lost data points from the reduced space and taking it back to the original space) and then merged all three channels into one to obtain a colorful reduced image.
 
- 
 After the dimensional reduction, we converted our reduced image to a grayscale image and did binarization to the data , which abandons the RGB color space and only keeps the XY coordinates and obtained a simpler two dimensional array that contains only whiute and black pixels, with a certain threshold value. Then, we composed an array (N by 2) from the binary image of which N represents the number of black pixels and 2 is the x and y coordinates.
 
-We had a few approaches to segmented the image to identify the vehicle plates area using different methods of unsupervised learning. We tried directly performing GMM on the black and white image. We also tried using a label method from skimage.measure library to first identify all the logos in the image. Then, we performed kmeans and set k as 2 to obtain two clusters - a dark background cluster and one where the license plate is located. Then, we find the coordinate of the region by finding row and col from the resulting array where the value is bigger than at least 10 (since the background will be equal to 0. Then, we found the location of the licence plate and we crop the image using the x y coordinates. However, the result from these two methods were consistent with every pictures; therefore, we performed the third option of unsupervised learning, which is the Density-based spatial clustering.
 
-We first Run DBSCAN on the data points (xy coordinates of the black pixels) with eps equals to 1.6, and min number to be 5. Since points in plate area should be closely packed with no gap between adjacent points, given any point on the plate there would be 9 adjacent points and they are all within 1.414 in distance, because euclidean distance is used in this algorithm. Then, we select the clusters that satisfy criterias like a certain length to width ratio, percentage of points to total data points, and percentage of area occupied by the points, because most of the target clusters have very similar values for these parameters. After this step, the raw result from DBSCAN can narrow down to just a few clusters and Beta-CV measure is implemented to identify the cluster most likely to be the target. Eventually, we calculate the rectangle position where the plate cluster is and find the region on the original image. 
+#### Unsupervised learning methods:
 
-#### Data
-A series of pictures of alphabets and numbers were chosen from the public domain for training the model. Two datasets were used for the model training. One data set contains 10 pictures of each character that are in the same font whereas the other contains 25 pictures of each and covers several fonts.
+##### Kmeans and GMM
+
+We had a few approaches to cluster the image to identify the vehicle plates area using different methods of unsupervised learning. We tried directly performing GMM on the black and white image. We also tried using a label method from skimage.measure library to first identify all the logos in the image and performed kmeans and set k as 2 to obtain two clusters - a dark background cluster and one where the license plate is located. Then, we find the coordinate of the region by finding row and col from the resulting array where the value is bigger than at least 10 (since the background will be equal to 0. Then, we found the location of the licence plate and we crop the image using the x y coordinates. However, the result from these two methods were not consistent with every pictures; therefore, we performed the third option of unsupervised learning, which is the Density-based spatial clustering.
+
+##### DBSCAN
+
+We first Run DBSCAN on the data points (xy coordinates of the black pixels) with eps equals to 1.6, and min number to be 5. Since points in plate area should be closely packed with no gap between adjacent points, given any point on the plate there would be 9 adjacent points and they are all within 1.414 in distance, because euclidean distance is used in this algorithm. Then, we select the clusters that satisfy criterias like a certain length to width ratio, percentage of points to total data points, and percentage of area occupied by the points, because most of the target clusters have very similar values for these parameters. After this step, the raw result from DBSCAN can narrow down to just a few clusters and Beta-CV measure is implemented to identify the cluster most likely to be the target. Eventually, we calculate the rectangle position where the plate cluster is and find the region on the original image.
+
 
 #### Supervised learning methods:
 
-For the supervised learning section, SVM was used to train the model and predict the plates. Similar to how the plates are preprocessed, each picture was converted into binary images and standardized shape before being passed into the model for training. ‘sklearn.svm.SVC’ was used to perform SVM on each picture and the models were saved as pkl files for later prediction. As for the kernel, linear and poly were both used and compared but based on the results no noticeable difference was found.  After the models were trained, each separated character captured from the plate was first reshaped to a standardized shape and then passed into the 2 trained models for separate prediction. 
+##### Support Vector Machine 
 
-#### Deep Learning Method
+For the supervised learning section, SVM was used to train the model and predict the plates. Similar to how the plates are preprocessed, each picture was converted into binary images and standardized shape before being passed into the model for training. ‘sklearn.svm.SVC’ was used to perform SVM on each picture and the models were saved as pkl files for later prediction. As for the kernel, linear and poly were both used and compared but based on the results no noticeable difference was found. After the models were trained, each separated character captured from the plate was first reshaped to a standardized shape and then passed into the 2 trained models for separate prediction.
 
-Since the result of SVM isn’t as accurate as we wish it to be, we have also tried the Convolutional Neural Network as one of the supervised learning methods to extract characters from the number plates. It is also a deep learning algorithm in which we use multiple layers to progressly extract features that have higher importances from the images. In our project, we used 6 layers to reduce the images into a form that is easier to process, without losing features that are essential to getting a good prediction. 
+##### Convolutional Neural Network (Deep Learning Algorithm)
+
+Since the result of SVM isn’t as accurate as we wish it to be, we have also tried the Convolutional Neural Network as one of the supervised learning methods to extract characters from the number plates. It is also a deep learning algorithm in which we use multiple layers to progressly extract features that have higher importances from the images. In our project, we used 6 layers to reduce the images into a form that is easier to process, without losing features that are essential to getting a good prediction.
 
 To begin our CNN implementation, we imported keras from TensorFlow which is a python library that is focusing on deep learning techniques .
 
 The first layer we used is a convolution layer with 32 output kernels and RELU as activation function. This way, it will hold the raw pixel values of the training images and extract features from it. It also ensures the spatial dimension by learning images features from small squares of input data.
 
-The second layer we used is a max-pooling layer, which is also responsible for reducing the spatial size of the feature and returning the maximum value from the portion of the image covered by the kernel . The reason why we used max pooling is to reduce the noise with dimensionality reduction. The model is now able to understand the features. 
+The second layer we used is a max-pooling layer, which is also responsible for reducing the spatial size of the feature and returning the maximum value from the portion of the image covered by the kernel . The reason why we used max pooling is to reduce the noise with dimensionality reduction. The model is now able to understand the features.
 
-The third layer we used is a dropout layer in which we randomly set input units to 0 with a frequency rate of 0.4 at each step during training time. This means that 60% of the neurons will be preserved. This layer is used to prevent overfitting.
-The fourth layer we used is called a flatten layer which simply can transform our image into a column vector. 
+The third layer we used is a dropout layer in which we randomly set input units to 0 with a frequency rate of 0.4 at each step during training time. This means that 60% of the neurons will be preserved. This layer is used to prevent overfitting. The fourth layer we used is called a flatten layer which simply can transform our image into a column vector.
 
 The fifth and sixth layers are dense layers, which we are using to classify images based on output from previous layers. The first activation we use is RELU and the second activation we used in softmax since relu has a better computation performance and softmax function is usually used in the last output layer.
 
-To train the model we created above, we used data with 30 images with different format for each class (0-z) to train and randomly chose 5 from each of the 30 images to test the accuracy of it. The accuracy of the model will be discussed in the results section. 
+To train the model we created above, we used data with 30 images with different format for each class (0-z) to train and randomly chose 5 from each of the 30 images to test the accuracy of it. The accuracy of the model will be discussed in the results section.
 
 After testing, we see that 40 times of epochs is enough to distinguish and correctly classify the features in images.
 
 To get the output of the license plate, we used the cropped image that is obtained from our unsupervised method and called the predict method from the model.
 
-
-
-
-
-
-
 ## Results
+
+
+#### PCA 
 
 Our project focused on car plate recognition, which dataset consists of pixels of a given image. Before preprocessing the image, we run PCA on several images. We found that most pictures work best with a dimension of 50 as the parameter for PCA. The average variance that was accounted for after PCA is around 98.6% percent which is relatively high. With the compressed image, our processing speed will dramatically increase when it comes to future training since each channel’s dimension is decreased to 50.
 
@@ -98,7 +107,21 @@ The results of supervised learning greatly depend on unsupervised learning for a
 
 #### Supervisewd Learning Results
 
-The results of supervised learning greatly depend on unsupervised learning for accurately capturing all the characters on the plate in order to produce accurate predictions. If only judging by the prediction of the individual character successfully captured from the plate, the SVM model of the first data set has an accuracy of about 53.5%, and the model trained by the second data set has an accuracy of about 68.3%. The accuracies are based on the same dozen of car images. 
+##### Supported Vector Machine:
+
+The results of supervised learning greatly depend on unsupervised learning for accurately capturing all the characters on the plate in order to produce accurate predictions. If only judging by the prediction of the individual character successfully captured from the plate, the SVM model of the first data set has an accuracy of about 53.5%, and the model trained by the second data set has an accuracy of about 68.3%. The accuracies are based on the same dozen of car images.
+
+<img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/123.jpg?raw=true">
+
+
+
+##### Convolutional Neural Network:
+ 
+ We can see that our model can reach around 94.5% accurate after training our model for 40 epochs from our dataset. For all the images where the unsupervised method can be successfully applied and identified, the overall success rate of completely identified is 80%.
+
+
+ <img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/1234.jpg?raw=true">
+ <img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/12345.jpg?raw=true">
 
 
 ## Discussion
@@ -113,6 +136,8 @@ As we decrease the n_components we put in the PCA, we can see that the picture b
 
 With the implementation of PCA, the computer will be able to process the reduced image much faster. 
 
+Even though we didn’t implement any additional feature selection and engineering to preprocess out image data. There are feature engineering and dimensionality reduction when creating layers for the CNN model. In the convolutional levels, the layer reduces the dimension by only including 32 filters in the output. The second layer, max pooling, also reduces the dimensionality as well. In the dropout filter, we selected 60% of the nodes and dropped 40% of it to prevent overfitting. This is a representation of feature selection. 
+
  
 #### Unsupervised learning methods (density estimation, clustering, etc)
 
@@ -124,7 +149,7 @@ By comparing the accuracy of the final results by GMM and DBSCAN, DBSCAN is clea
 
 #### Supervised Learning Discussion
 
-Since the labels to be predicted are the characters on the license plates, it is reasonable to use methods that can recognize patterns on the image. The regression methods are good at numerical, continuous, and/or data that might have a mathematical relationship. However, identifying patterns in an image is a classification process and decision tree, SVM as well as CNN would be ideal for this type of problem. Due to limited time, only SVM and CNN were implemented. The classification of the character is the last step of plate recognition, its accuracy depends on previous clustering methods that capture the characters on the plate and these methods are not perfect in terms of accuracy. Because of the limitation of the clustering methods implemented, the accuracy of the supervised learning part will only account for those characters that have been successfully captured from the plate. 
+Since the labels to be predicted are the characters on the license plates, it is reasonable to use methods that can recognize patterns on the image. The regression methods are good at numerical, continuous, and/or data that might have a mathematical relationship. However, identifying patterns in an image is a classification process and decision tree, SVM as well as CNN would be ideal for this type of problem. Due to limited time, only SVM and CNN were implemented. The classification of the character is the last step of plate recognition, its accuracy largely depends on previous clustering methods that capture the characters on the plate and these methods are not perfect in terms of accuracy. Because of the limitation of the clustering methods implemented, the accuracy of the supervised learning part will only account for those characters that have been successfully captured from the plate. Even though CNN is better at predicting the labels for license plates, SVM and CNN both have characters which are alike that are difficult to distinguish (including 1 and I, G and O, and 0 and D).
 
 ## Challenge
 
