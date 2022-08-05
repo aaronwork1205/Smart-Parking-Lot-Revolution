@@ -1,4 +1,4 @@
-# CS 4641 Project Midterm Report
+# CS 4641 Project Final Report
  <img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/new_info.jpg?raw=true"> 
 
 ## Introduction and background 
