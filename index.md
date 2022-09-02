@@ -1,5 +1,6 @@
 # CS 4641 Project Final Report
  <img src = "https://github.com/Aaronwork1205/Machine_learning/blob/gh-pages/assets/css/new_info.jpg?raw=true"> 
+ Presented by: Hao Fang, Wenhao Wang, Xiao Yang, Haochen Dai
 
 ## Introduction and background 
 
